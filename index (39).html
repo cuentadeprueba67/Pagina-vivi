@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For the soft days</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fff3dc; --paper2:#f6dcc0; --pink:#e9908f; --pink-d:#c9605f;
+  --wine:#7a2e2a; --peach:#f6c9a6; --ink:#3b2220; --note:#fde7a6;
+}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);
+  background:
+    repeating-linear-gradient(0deg,rgba(122,46,42,.035) 0 1px,transparent 1px 28px),
+    linear-gradient(90deg,var(--paper2),var(--paper) 8%,var(--paper) 92%,var(--paper2));
+  padding:28px 20px 90px;
+}
+main{max-width:460px;margin:0 auto}
+.kicker{font-size:11px;letter-spacing:.14em;color:var(--wine);opacity:.8}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:40px;line-height:1.1;margin:6px 0 26px;color:#2d3b2f}
+
+/* ---------- Cassette ---------- */
+.tape{
+  position:relative;aspect-ratio:1.58/1;border-radius:18px;
+  background:linear-gradient(160deg,#f2a5a3,var(--pink) 55%,#d97c7b);
+  box-shadow:0 18px 30px -10px rgba(122,46,42,.45),inset 0 2px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(0,0,0,.08);
+  transform:rotate(-2deg);
+}
+.screw{position:absolute;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e9b86a,#8a5a1c);box-shadow:0 1px 1px rgba(0,0,0,.4)}
+.screw::after{content:"";position:absolute;left:1px;right:1px;top:4px;height:1.5px;background:#5b3a10;transform:rotate(35deg)}
+.s1{top:9px;left:9px}.s2{top:9px;right:9px}.s3{bottom:9px;left:9px}.s4{bottom:9px;right:9px}
+.label{
+  position:absolute;left:7%;right:7%;top:9%;height:60%;border-radius:10px;
+  background:
+    conic-gradient(#f7d2b4 25%,#fbe3cc 0 50%,#f7d2b4 0 75%,#fbe3cc 0) 0 0/22px 22px;
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.35),inset 0 2px 6px rgba(122,46,42,.2);
+}
+.title-strip{
+  position:absolute;left:50%;top:7%;transform:translateX(-50%);width:62%;
+  background:#fff8ee;border-radius:6px;text-align:center;padding:4px 6px;
+  font-family:'Fraunces',serif;font-style:italic;font-size:12px;color:var(--wine);
+  box-shadow:0 1px 3px rgba(0,0,0,.15);
+}
+.window{
+  position:absolute;left:50%;top:34%;transform:translateX(-50%);width:66%;height:42%;
+  background:#8f3d3b;border-radius:30px;padding:8px;
+  box-shadow:inset 0 3px 6px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tape-roll{position:absolute;left:30%;right:30%;top:20%;bottom:20%;background:linear-gradient(#3a2018,#5a3326 50%,#3a2018);border-radius:4px;opacity:.9}
+.reel{
+  position:relative;width:34%;aspect-ratio:1;border-radius:50%;background:#f0b3ae;z-index:1;
+  box-shadow:inset 0 0 0 4px #d98a86,inset 0 0 0 9px #8f3d3b;
+  display:grid;place-items:center;
+}
+.reel::before{content:"";position:absolute;inset:26%;border-radius:50%;background:
+  conic-gradient(#fff3 0 12%,transparent 0 33%,#fff3 0 45%,transparent 0 66%,#fff3 0 78%,transparent 0);border:3px solid #7a2e2a}
+.playing .reel{animation:spin 2.6s linear infinite}
+.tape{transition:transform .5s ease}
+.tape.playing{animation:sway 3.2s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-3deg) translateY(0)}50%{transform:rotate(1.5deg) translateY(-8px)}}
+.tape.playing .charm{animation:swing 1.6s ease-in-out infinite;transform-origin:top center}
+@keyframes swing{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.charm{position:absolute;left:35%;bottom:4%;font-size:22px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.charm.b{left:52%;font-size:20px}
+.base{
+  position:absolute;left:14%;right:14%;bottom:0;height:22%;
+  background:linear-gradient(#e47f7e,#cf6e6d);clip-path:polygon(0 0,100% 0,92% 100%,8% 100%);
+}
+.hole{position:absolute;bottom:20%;width:12px;height:10px;border-radius:3px;background:#7a1f3a;box-shadow:inset 0 2px 3px rgba(0,0,0,.5)}
+.h1{left:22%}.h2{left:34%}.h3{right:34%}.h4{right:22%}
+
+/* ---------- Controles ---------- */
+.row{display:grid;grid-template-columns:1fr;gap:18px;margin-top:30px}
+.player{display:flex;align-items:center;justify-content:center;gap:14px;border-top:1px solid rgba(122,46,42,.25);border-bottom:1px solid rgba(122,46,42,.25);padding:12px 0}
+.play{
+  flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--wine);color:#fff;
+  display:grid;place-items:center;cursor:pointer;
+}
+.play:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid #2d3b2f;outline-offset:3px}
+.play svg{width:16px;height:16px;fill:#fff}
+.meta b{display:block;font-weight:500;font-size:15px}
+.meta span{font-size:12px;opacity:.7}
+.note{
+  background:var(--note);padding:14px 16px;border-radius:3px;transform:rotate(1.2deg);
+  box-shadow:0 6px 10px -6px rgba(122,46,42,.4);
+  font-family:'Fraunces',serif;font-style:italic;font-size:17px;line-height:1.4;
+}
+.note small{display:block;font-family:'DM Sans',sans-serif;font-style:normal;font-size:11px;margin-bottom:6px;opacity:.7}
+
+/* ---------- Canciones ---------- */
+h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:38px 0 14px}
+.hint{font-size:13px;opacity:.7;margin-bottom:12px}
+.songs{list-style:none;padding:0;display:grid;gap:10px}
+.songs .song{width:100%;text-align:left;font:inherit;cursor:pointer;
+  display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;
+  background:rgba(255,255,255,.55);border:1.5px solid rgba(122,46,42,.25);border-radius:12px;padding:12px 14px;
+  transition:background .2s,transform .2s;
+}
+.songs .song:hover{background:#fff;transform:translateY(-2px)}
+.songs .t{flex:1}
+.songs .t b{display:block;font-weight:500}
+.songs .t span{font-size:12px;opacity:.7}
+.songs .go{background:var(--pink-d);color:#fff;border-radius:999px;font-size:12px;padding:6px 12px;white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){.playing .reel,.tape.playing,.tape.playing .charm{animation:none}.songs .song{width:100%;text-align:left;font:inherit;cursor:pointer;transition:none}}
+
+.modal{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(59,34,32,.65)}
+.modal.open{display:flex}
+.win{width:min(560px,100%);background:var(--paper);border-radius:14px;padding:12px;box-shadow:0 20px 40px rgba(0,0,0,.4);border:2px solid var(--pink)}
+.win-bar{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 10px;font-family:'Fraunces',serif;font-size:17px}
+.close{border:0;background:var(--wine);color:#fff;width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer}
+.win video{display:block;width:100%;max-height:70vh;border-radius:8px;background:#000}
+</style>
+</head>
+<body>
+<main>
+  <p class="kicker">PARA TI</p>
+  <h1>For the soft days</h1>
+
+  <div class="tape" id="tape" aria-hidden="true">
+    <i class="screw s1"></i><i class="screw s2"></i><i class="screw s3"></i><i class="screw s4"></i>
+    <div class="label"></div>
+    <div class="title-strip">For the soft days</div>
+    <div class="window"><div class="reel"></div><div class="tape-roll"></div><div class="reel"></div></div>
+    <span class="charm">🍪</span><span class="charm b">🎀</span>
+    <div class="base"></div>
+    <i class="hole h1"></i><i class="hole h2"></i><i class="hole h3"></i><i class="hole h4"></i>
+  </div>
+
+  <div class="row">
+    <div class="player">
+      <button class="play" id="play" aria-label="Reproducir música de fondo">
+        <svg viewBox="0 0 16 16" id="icon"><path d="M3 1.5v13l11-6.5z"/></svg>
+      </button>
+      
+    </div>
+    <div class="note"><small>Nota</small>Hola tonete,<br><br>Solo queria recordarte lo importante que eres para mi hoy y siempre. Te amo mucho</div>
+  </div>
+
+  <h2>Canciones para ti</h2>
+  <ul class="songs">
+    <li>
+      <button type="button" class="song" data-src="heavy.mp4" data-start="100" data-title="Heavy">
+        <div class="t"><b>Heavy</b><span>The Marias</span></div>
+        <span class="go">Ver video</span>
+      </button>
+    </li>
+    <li>
+      <button type="button" class="song" data-src="glue-song.mp4" data-start="50" data-title="Glue Song">
+        <div class="t"><b>Glue Song</b><span>beabadoobee</span></div>
+        <span class="go">Ver video</span>
+      </button>
+    </li>
+  </ul>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Video">
+  <div class="win">
+    <div class="win-bar"><span id="vtitle"></span><button class="close" id="close" aria-label="Cerrar video">&times;</button></div>
+    <video id="vid" controls playsinline preload="none"></video>
+  </div>
+</div>
+
+<audio id="bg" src="cmj-fondo.mp3" loop preload="auto"></audio>
+
+<script>
+const audio = document.getElementById('bg');
+const btn = document.getElementById('play');
+const icon = document.getElementById('icon');
+const tape = document.getElementById('tape');
+const PLAY = 'M3 1.5v13l11-6.5z', PAUSE = 'M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z';
+
+function ui(on){
+  tape.classList.toggle('playing', on);
+  icon.innerHTML = '<path d="'+(on?PAUSE:PLAY)+'"/>';
+  btn.setAttribute('aria-label', on ? 'Pausar música de fondo' : 'Reproducir música de fondo');
+}
+function toggle(){
+  if(audio.paused){ audio.play().then(()=>ui(true)).catch(()=>{}); }
+  else { audio.pause(); ui(false); }
+}
+btn.addEventListener('click', toggle);
+
+// Los navegadores bloquean el autoplay: se intenta con el primer toque en la página.
+let tried = false;
+document.addEventListener('pointerdown', e=>{
+  if(tried || e.target.closest('#play') || e.target.closest('.song') || e.target.closest('#modal')) return;
+  tried = true;
+  audio.play().then(()=>ui(true)).catch(()=>{});
+},{once:false});
+
+// Ventana de video: se abre al tocar una canción y empieza en el minuto indicado.
+const modal=document.getElementById('modal'), vid=document.getElementById('vid'), vtitle=document.getElementById('vtitle');
+document.querySelectorAll('.song').forEach(b=>b.addEventListener('click',()=>{
+  if(!audio.paused){ audio.pause(); ui(false); }
+  const start=+b.dataset.start||0;
+  vtitle.textContent=b.dataset.title;
+  vid.src=b.dataset.src;
+  vid.addEventListener('loadedmetadata',()=>{ vid.currentTime=start; },{once:true});
+  modal.classList.add('open');
+  vid.play().catch(()=>{});
+}));
+function closeModal(){ vid.pause(); vid.removeAttribute('src'); vid.load(); modal.classList.remove('open'); }
+document.getElementById('close').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+</script>
+</body>
+</html>
