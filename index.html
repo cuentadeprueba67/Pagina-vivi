@@ -96,8 +96,9 @@ h1{font-family:'Fraunces',Georgia,serif;font-weight:500;font-size:40px;line-heig
 /* ---------- Canciones ---------- */
 h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:38px 0 14px}
 .hint{font-size:13px;opacity:.7;margin-bottom:12px}
+.songs li{display:flex;align-items:center;gap:10px}
 .songs{list-style:none;padding:0;display:grid;gap:10px}
-.songs .song{width:100%;text-align:left;font:inherit;cursor:pointer;
+.songs .song{flex:1;min-width:0;text-align:left;font:inherit;cursor:pointer;
   display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;
   background:rgba(255,255,255,.55);border:1.5px solid rgba(122,46,42,.25);border-radius:12px;padding:12px 14px;
   transition:background .2s,transform .2s;
@@ -108,7 +109,7 @@ h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:38px 0 14p
 .songs .t span{font-size:12px;opacity:.7}
 .songs .go{background:var(--pink-d);color:#fff;border-radius:999px;font-size:12px;padding:6px 12px;white-space:nowrap}
 
-@media (prefers-reduced-motion:reduce){.playing .reel,.tape.playing,.tape.playing .charm{animation:none}.songs .song{width:100%;text-align:left;font:inherit;cursor:pointer;transition:none}}
+@media (prefers-reduced-motion:reduce){.playing .reel,.tape.playing,.tape.playing .charm{animation:none}.songs .song{flex:1;min-width:0;text-align:left;font:inherit;cursor:pointer;transition:none}}
 
 .modal{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(59,34,32,.65)}
 .modal.open{display:flex}
@@ -146,16 +147,18 @@ h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:38px 0 14p
   <h2>Canciones para ti</h2>
   <ul class="songs">
     <li>
-      <button type="button" class="song" data-src="heavy.mp4" data-start="100" data-title="Heavy">
+      <button type="button" class="song" data-src="heavy.mp4" data-start="0" data-title="Heavy">
         <div class="t"><b>Heavy</b><span>The Marias</span></div>
         <span class="go">Ver video</span>
       </button>
+      <button type="button" class="play mini" data-track="heavy.mp3" aria-label="Reproducir Heavy en el mixtape"><svg viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z"/></svg></button>
     </li>
     <li>
-      <button type="button" class="song" data-src="glue-song.mp4" data-start="50" data-title="Glue Song">
+      <button type="button" class="song" data-src="glue-song.mp4" data-start="0" data-title="Glue Song">
         <div class="t"><b>Glue Song</b><span>beabadoobee</span></div>
         <span class="go">Ver video</span>
       </button>
+      <button type="button" class="play mini" data-track="glue-song.mp3" aria-label="Reproducir Glue Song en el mixtape"><svg viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z"/></svg></button>
     </li>
   </ul>
 </main>
@@ -170,46 +173,57 @@ h2{font-family:'Fraunces',serif;font-weight:500;font-size:22px;margin:38px 0 14p
 <audio id="bg" src="cmj-fondo.mp3" loop preload="auto"></audio>
 
 <script>
-const audio = document.getElementById('bg');
-const btn = document.getElementById('play');
-const icon = document.getElementById('icon');
+const bg = document.getElementById('bg');
 const tape = document.getElementById('tape');
 const PLAY = 'M3 1.5v13l11-6.5z', PAUSE = 'M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z';
 
-function ui(on){
-  tape.classList.toggle('playing', on);
-  icon.innerHTML = '<path d="'+(on?PAUSE:PLAY)+'"/>';
-  btn.setAttribute('aria-label', on ? 'Pausar música de fondo' : 'Reproducir música de fondo');
+// Todos los botones de play: el principal (fondo) y uno por cada canción
+const items = [{audio: bg, btn: document.getElementById('play')}];
+document.querySelectorAll('.mini').forEach(b=>{
+  items.push({audio: new Audio(b.dataset.track), btn: b});
+});
+
+function refresh(){
+  let any = false;
+  items.forEach(it=>{
+    const on = !it.audio.paused;
+    any = any || on;
+    it.btn.querySelector('path').setAttribute('d', on ? PAUSE : PLAY);
+  });
+  tape.classList.toggle('playing', any);
 }
-function toggle(){
-  if(audio.paused){ audio.play().then(()=>ui(true)).catch(()=>{}); }
-  else { audio.pause(); ui(false); }
+function toggle(it){
+  if(it.audio.paused){
+    items.forEach(o=>{ if(o !== it) o.audio.pause(); });
+    it.audio.play().catch(()=>{});
+  } else {
+    it.audio.pause();
+  }
 }
-btn.addEventListener('click', toggle);
+items.forEach(it=>{
+  it.btn.addEventListener('click', ()=>toggle(it));
+  ['play','pause','ended'].forEach(ev=>it.audio.addEventListener(ev, refresh));
+});
 
 // Los navegadores bloquean el autoplay: se intenta con el primer toque en la página.
-let tried = false;
 document.addEventListener('pointerdown', e=>{
-  if(tried || e.target.closest('#play') || e.target.closest('.song') || e.target.closest('#modal')) return;
-  tried = true;
-  audio.play().then(()=>ui(true)).catch(()=>{});
-},{once:false});
+  if(e.target.closest('.play') || e.target.closest('.song') || e.target.closest('#modal')) return;
+  bg.play().catch(()=>{});
+},{once:true});
 
-// Ventana de video: se abre al tocar una canción y empieza en el minuto indicado.
-const modal=document.getElementById('modal'), vid=document.getElementById('vid'), vtitle=document.getElementById('vtitle');
+// Ventana de video: se abre al tocar una canción, empieza desde el minuto 0 y pausa todo el audio.
+const modal = document.getElementById('modal'), vid = document.getElementById('vid'), vtitle = document.getElementById('vtitle');
 document.querySelectorAll('.song').forEach(b=>b.addEventListener('click',()=>{
-  if(!audio.paused){ audio.pause(); ui(false); }
-  const start=+b.dataset.start||0;
-  vtitle.textContent=b.dataset.title;
-  vid.src=b.dataset.src;
-  vid.addEventListener('loadedmetadata',()=>{ vid.currentTime=start; },{once:true});
+  items.forEach(it=>it.audio.pause());
+  vtitle.textContent = b.dataset.title;
+  vid.src = b.dataset.src;
   modal.classList.add('open');
   vid.play().catch(()=>{});
 }));
 function closeModal(){ vid.pause(); vid.removeAttribute('src'); vid.load(); modal.classList.remove('open'); }
-document.getElementById('close').addEventListener('click',closeModal);
-modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+document.getElementById('close').addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
